@@ -3,13 +3,9 @@ version: "3.7"
 services:
 
   db:
-    container_name: app-pg-db
     image: postgres:13.6-alpine
     restart: on-failure
-    environment:
-      - POSTGRES_USER=$POSTGRES_USER
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-      - POSTGRES_DB=$POSTGRES_DB
+    env_file: .env
     ports:
       - "4011:5432"
 
@@ -26,7 +22,6 @@ services:
       [ "-path", "/database", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable", "up" ]
 
   app:
-    container_name: network-app
     depends_on:
       - db
     env_file:
@@ -38,3 +33,4 @@ services:
       - ./:/app
     ports:
       - "3333:3333"
+

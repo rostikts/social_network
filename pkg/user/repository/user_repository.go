@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/phuslu/log"
 	"github.com/rostikts/social_network/domain/model"
@@ -29,15 +30,31 @@ func (r userRepository) Create(user model.User) (model.User, error) {
 }
 
 func (r userRepository) Update(user model.User) (model.User, error) {
-	_, err := r.db.NamedExec(`UPDATE users u SET username=:username, first_name=:first_name, last_name=:last_name, email=:email WHERE u.id=:id`, user)
+	res, err := r.db.NamedExec(`UPDATE users u SET username=:username, first_name=:first_name, last_name=:last_name, email=:email WHERE u.id=:id`, user)
+	if err != nil {
+		log.DefaultLogger.Info().Err(err).Msg("User got err during data update")
+		return model.User{}, err
+	}
+	rows, err := res.RowsAffected()
 	if err != nil {
 		return model.User{}, err
 	}
+	if rows == 0 {
+		return model.User{}, sql.ErrNoRows
+	}
+
 	return user, nil
 }
 
 func (r userRepository) UpdatePassword(user model.User) error {
-	_, err := r.db.NamedExec(`UPDATE users u SET password=:password WHERE u.id=:id`, user)
+	res, err := r.db.NamedExec(`UPDATE users u SET password=:password WHERE u.id=:id`, user)
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return sql.ErrNoRows
+	}
 	return err
 }
 
