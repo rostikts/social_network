@@ -1,10 +1,10 @@
 package model
 
 type User struct {
-	ID        uint   `json:"id"`
-	UserName  string `json:"username"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	ID        uint   `json:"id" db:"id"`
+	UserName  string `json:"username" db:"username"`
+	FirstName string `json:"first_name" db:"first_name"`
+	LastName  string `json:"last_name" db:"last_name"`
+	Email     string `json:"email" db:"email"`
+	Password  string `json:"password" db:"password"`
 }
